@@ -1,7 +1,8 @@
 import wx
 
+
 from GlobalFunc.Frame import AbstractFrame
-from ManagerSystem.StudentFunc import SetMyTeacher, showStudentInfoSelf, UpdateMyInfoButton
+from ManagerSystem.StudentFunc import SetMyTeacher
 
 
 class StudentManage(AbstractFrame):
@@ -25,8 +26,8 @@ class StudentManage(AbstractFrame):
             frm = SetMyTeacher("设置我的老师",self.returnToBack,self.aams,self.loc)
             frm.frame.SetSize(300, 401)
         elif eventId == 3:
-            showStudentInfoSelf(self.aams,self.loc)
+            self.aams.studentList[self.loc].showMyInfo()
         elif eventId == 4:
             self.frame.Hide()
-            frm = UpdateMyInfoButton("修改我的信息",self.returnToBack,self.aams,self.loc)
+            frm = self.aams.studentList[self.loc].UpdateMyInfo("修改我的信息",self.returnToBack,self.aams,self.loc)
             frm.frame.SetSize(300, 401)

@@ -3,6 +3,7 @@ import random
 import sys
 
 
+
 def restartProgram():
     python = sys.executable
     os.execl(python, python, *sys.argv)

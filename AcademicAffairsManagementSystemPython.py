@@ -3,9 +3,12 @@ import wx
 from Frame.FindPasswordFrame import FindPasswordFrame
 from Frame.LoginFrame import LoginFrame
 from Frame.RegisterFrame import RegisterFrame
-from GlobalFunc.FileManage import initList, Save
+from GlobalFunc.FileManage import Save
+
 from GlobalFunc.Frame import MessageFrame
 from GlobalFunc.Func import checkUserName, checkUserPhoneNumber, checkUserIdNumber
+from GlobalFunc.InitManage import initList
+
 from Person.Student import Student
 
 
@@ -205,16 +208,27 @@ class StartFrame(wx.Frame):
         self.Show()
 
 
-gp = AcademicAffairsManagementSystemPython()
-initList(gp)
+aams = AcademicAffairsManagementSystemPython()
 
-gp.updateLog += "Version:1.3\n"
-gp.updateLog += "1.修复了部分无验证码界面冲突的bug\n"
-gp.updateLog += "2.添加了性别的相关设置\n"
-gp.updateLog += "3.添加了学生修改自身信息的功能\n"
 
+
+aams.updateLog += "Version:1.4\n"
+aams.updateLog += "1.修复了管理员功能界面冲突的bug\n"
+aams.updateLog += "2.添加了默认生成管理员\n"
+aams.updateLog += "3.添加了管理员修改自身信息功能\n"
+aams.updateLog += "4.修改了管理员功能代码布局\n"
+aams.updateLog += "5.进一步完善管理员功能\n"
+aams.updateLog += "6.进一步利用多态\n"
+aams.updateLog += "7.将初始化与保存拆分以修复循环导入问题\n"
+aams.updateLog += "8.修复管理员子界面跳转问题\n"
+aams.updateLog += "后续可能考虑的问题-----------\n"
+aams.updateLog += "文件为空时的初始化\n"
+aams.updateLog += "管理员添加人物与注册添加抽象化\n"
+aams.updateLog += "\"比如 你的用户名框框 不是有字 我点了框框之后 字最好自己消失\"\n"
+
+initList(aams)
 app = wx.App()
-frm = StartFrame(gp)
-frm.Show()
+frame = StartFrame(aams)
+frame.Show()
 
 app.MainLoop()

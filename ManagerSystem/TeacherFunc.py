@@ -1,7 +1,6 @@
 import wx
 
 from GlobalFunc.FileManage import Save
-
 from GlobalFunc.Frame import TextFrame, MessageFrame, AbstractFrame
 from GlobalFunc.FrameParts import setTextBox, setButtons
 from GlobalFunc.Func import checkUserName, checkUserIdNumber, checkUserPhoneNumber
@@ -66,16 +65,6 @@ def showMyAllStudent(aams, loc):
         StudentInfo += f"年龄:{aams.teacherList[loc].mOwnStudentList[i].mAge}   "
         StudentInfo += f"手机号:{aams.teacherList[loc].mOwnStudentList[i].mPhoneNumber}\n"
     TextFrame(StudentInfo)
-
-
-def showTeacherInfo(aams, loc):
-    teacherList = ''
-    teacherList += f"姓名:{aams.teacherList[loc].mName}\n"
-    teacherList += f"身份证:{aams.teacherList[loc].mId}\n"
-    teacherList += f"年龄:{aams.teacherList[loc].mAge}\n"
-    teacherList += f"手机号:{aams.teacherList[loc].mPhoneNumber}\n"
-    teacherList += f"邀请码:{aams.teacherList[loc].mCode}\n"
-    TextFrame(teacherList)
 
 
 class FindMyStudentButton(AbstractFrame):

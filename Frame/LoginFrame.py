@@ -28,6 +28,7 @@ class LoginFrame(AbstractFrame):
             userKeyName = self.nameValue.GetValue()
             userKeyPassword = self.passwordValue1.GetValue()
             userKeyCode = self.keyCode.GetValue()
+            #先检查验证码是否正确 再检查用户名是否符合格式 再检查用户名是否存在 最终返回 是否通过 用户名所在组 以及位置
             ifCodeRight, group, loc = self.aams.loginCheckCode(userKeyName, userKeyCode, self.code)
             if ifCodeRight:
                 self.times -= 1

@@ -2,9 +2,8 @@ from abc import ABC, abstractmethod
 
 import wx
 
-from GlobalFunc.Func import outCode
-
 from GlobalFunc.FileManage import Save
+from GlobalFunc.Func import outCode
 from GlobalFunc.Func import restartProgram
 
 
