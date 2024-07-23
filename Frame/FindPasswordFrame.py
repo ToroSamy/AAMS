@@ -1,10 +1,10 @@
 import wx
 
-from GlobalFunc.Frame import AbstractFrameC, AbstractFrame
+from GlobalFunc.Frame import AbstractFrame
 from GlobalFunc.FrameParts import setTextBox
 
 
-class FindPasswordFrame(AbstractFrameC):
+class FindPasswordFrame(AbstractFrame):
     def __init__(self, title,returntoback,aams):
         super().__init__(title,returntoback,aams)
         self.nameValue,name = setTextBox(self.panel,"用户名","请输入用户名")
@@ -27,8 +27,8 @@ class FindPasswordFrame(AbstractFrameC):
             flag, group, loc = self.aams.findPassword(userKeyName, userKeyId, userKeyPhone)
             if flag:
                 self.frame.Hide()
-                ChangePasswordFrame('修改密码', self.returnToBack, self.aams, loc,group)
-
+                frm = ChangePasswordFrame('修改密码', self.returnToBack, self.aams, loc,group)
+                frm.frame.SetSize(300, 401)
 class ChangePasswordFrame(AbstractFrame):
     def __init__(self, title,returntoback,aams,loc,group):
         super().__init__(title,returntoback,aams,loc)

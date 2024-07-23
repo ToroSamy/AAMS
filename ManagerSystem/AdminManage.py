@@ -16,7 +16,9 @@ class AdminManage(AbstractFrame):
         eventId = event.GetId()
         if eventId == 1:
             self.frame.Hide()
-            AdminTeacherPanel("教师管理系统",self.returnToBack,self.aams,self.loc)
+            frm = AdminTeacherPanel("教师管理系统",self.returnToBack,self.aams,self.loc)
+            frm.frame.SetSize(300, 401)
         elif eventId == 2:
             self.frame.Hide()
-            AdminStudentPanel("学生管理系统",self.returnToBack,self.aams,self.loc)
+            frm = AdminStudentPanel("学生管理系统",self.returnToBack,self.aams,self.loc)
+            frm.frame.SetSize(300, 401)

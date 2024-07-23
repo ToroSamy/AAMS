@@ -26,17 +26,21 @@ class TeacherManage(AbstractFrame):
         eventId = event.GetId()
         if eventId == 2:
             self.frame.Hide()
-            AddMyStudent("添加单名学生",self.returnToBack,self.aams,self.loc)
+            frm = AddMyStudent("添加单名学生",self.returnToBack,self.aams,self.loc)
+            frm.frame.SetSize(300, 401)
         elif eventId == 3:
             showTeacherInfo(self.aams,self.loc)
         elif eventId == 4:
             self.frame.Hide()
-            FindMyStudentButton("查找单名学生",self.returnToBack,self.aams,self.loc)
+            frm = FindMyStudentButton("查找单名学生",self.returnToBack,self.aams,self.loc)
+            frm.frame.SetSize(300, 401)
         elif eventId == 5:
             self.frame.Hide()
-            DelMyStudentButton("删除单名学生",self.returnToBack,self.aams,self.loc)
+            frm = DelMyStudentButton("删除单名学生",self.returnToBack,self.aams,self.loc)
+            frm.frame.SetSize(300, 401)
         elif eventId == 6:
             self.frame.Hide()
-            UpdateMyStudentButton("修改单名学生",self.returnToBack,self.aams,self.loc)
+            frm = UpdateMyStudentButton("修改单名学生",self.returnToBack,self.aams,self.loc)
+            frm.frame.SetSize(300, 401)
         elif eventId == 7:
             showMyAllStudent(self.aams,self.loc)

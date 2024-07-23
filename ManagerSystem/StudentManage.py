@@ -21,6 +21,7 @@ class StudentManage(AbstractFrame):
         eventId = event.GetId()
         if eventId == 2:
             self.frame.Hide()
-            SetMyTeacher("设置我的老师",self.returnToBack,self.aams,self.loc)
+            frm = SetMyTeacher("设置我的老师",self.returnToBack,self.aams,self.loc)
+            frm.frame.SetSize(300, 401)
         elif eventId == 3:
             showStudentInfoSelf(self.aams,self.loc)

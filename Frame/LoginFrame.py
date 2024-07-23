@@ -1,6 +1,6 @@
 import wx
 
-from GlobalFunc.Frame import MessageFrame, AbstractFrameC
+from GlobalFunc.Frame import MessageFrame, AbstractFrame
 from GlobalFunc.FrameParts import setTextBox
 
 
@@ -9,7 +9,7 @@ from ManagerSystem.StudentManage import StudentManage
 from ManagerSystem.TeacherManage import TeacherManage
 
 
-class LoginFrame(AbstractFrameC):
+class LoginFrame(AbstractFrame):
     def __init__(self, title, returntoback, aams):
         super().__init__(title, returntoback, aams)
         self.nameValue, name = setTextBox(self.panel, '用户名', '请输入用户名')
@@ -37,13 +37,16 @@ class LoginFrame(AbstractFrameC):
                     self.times = 3
                     if group == 1:
                         self.frame.Hide()
-                        AdminManage("欢迎管理员 "+f"{self.aams.adminList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)
+                        frm = AdminManage("欢迎管理员 "+f"{self.aams.adminList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)
+                        frm.frame.SetSize(300, 401)
                     elif group == 2:
                         self.frame.Hide()
-                        TeacherManage("欢迎教师 "+f"{self.aams.teacherList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)
+                        frm = TeacherManage("欢迎教师 "+f"{self.aams.teacherList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)
+                        frm.frame.SetSize(300, 401)
                     elif group == 3:
                         self.frame.Hide()
-                        StudentManage("欢迎学生 "+f"{self.aams.studentList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)
+                        frm = StudentManage("欢迎学生 "+f"{self.aams.studentList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)
+                        frm.frame.SetSize(300, 401)
                     self.reloadCode(self)
                 if self.times == 0:
                     self.times = 3

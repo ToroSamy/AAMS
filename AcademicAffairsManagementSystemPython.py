@@ -13,6 +13,7 @@ class AcademicAffairsManagementSystemPython:
     studentList = []
     teacherList = []
     adminList = []
+    updateLog = ''
 
     @classmethod
     def findAdmin(cls, name):
@@ -164,6 +165,8 @@ class AcademicAffairsManagementSystemPython:
             return True
         MessageFrame(f"修改失败!密码不一致!")
         return False
+
+
 class StartFrame(wx.Frame):
     def __init__(self, aams):
         super().__init__(None, title="开始菜单", size=(300, 250), style=wx.DEFAULT_FRAME_STYLE & ~wx.RESIZE_BORDER)
@@ -178,23 +181,35 @@ class StartFrame(wx.Frame):
         vbox.Add(findPasswordFrame, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         panel.SetSizer(vbox)
         self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=3)
+        self.Center()
+
     def onClick(self, event):
         eventId = event.GetId()
         if eventId == 1:
             self.Hide()
-            LoginFrame('登录界面', self.returnToBack,self.aams)
+            frm = LoginFrame('登录界面', self.returnToBack, self.aams)
+            frm.frame.SetSize(300, 401)
         elif eventId == 2:
             self.Hide()
-            RegisterFrame('注册界面', self.returnToBack,self.aams)
+            frm = RegisterFrame('注册界面', self.returnToBack, self.aams)
+            frm.frame.SetSize(300, 401)
         elif eventId == 3:
             self.Hide()
-            FindPasswordFrame('找回密码', self.returnToBack,self.aams)
+            frm = FindPasswordFrame('找回密码', self.returnToBack, self.aams)
+            frm.frame.SetSize(300, 401)
+
     def returnToBack(self):
         self.Show()
 
 
 gp = AcademicAffairsManagementSystemPython()
 initList(gp)
+
+gp.updateLog += "Version:1.2\n"
+gp.updateLog += "1.进一步抽象化了有验证码和无验证码的面板\n"
+gp.updateLog += "2.增加了抽象化的图片与提示\n"
+gp.updateLog += "3.抽象化了列表菜单\n"
+gp.updateLog += "4.增加了更新日志入口\n"
 
 app = wx.App()
 frm = StartFrame(gp)

@@ -1,10 +1,10 @@
 import wx
 
-from GlobalFunc.Frame import AbstractFrameC
+from GlobalFunc.Frame import AbstractFrame
 from GlobalFunc.FrameParts import setTextBox
 
 
-class RegisterFrame(AbstractFrameC):
+class RegisterFrame(AbstractFrame):
     def __init__(self, title,returntoback,aams):
         super().__init__(title,returntoback,aams)
         self.nameValue,name = setTextBox(self.panel,"用户名","请输入用户名")
