@@ -7,8 +7,9 @@ from GlobalFunc.Func import outCode
 from GlobalFunc.Func import restartProgram
 
 
+
 class AbstractFrame(ABC):
-    def __init__(self, title, returntoback, aams, loc="0"):
+    def __init__(self, title, returntoback, aams, loc="has"):
 
         # ------------
         # aams,loc="0"根据我的情境需求添加的
@@ -23,6 +24,7 @@ class AbstractFrame(ABC):
         # 提前绑定按钮
         self.frame.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=100)
         self.frame.Bind(wx.EVT_MENU, self.onClick, id=101, id2=200)
+
         # 面板相互跳转
         self.returnButton = wx.Button(self.panel, id=901, label="点击返回")
         self.frame.Bind(wx.EVT_BUTTON, self.comeToBack, id=901)
@@ -40,7 +42,7 @@ class AbstractFrame(ABC):
         self.menuBar.Append(self.funC, "&功能")
         self.aams = aams
         self.loc = loc
-        if loc == "0":
+        if loc == "has":
             self.code = outCode()
             self.codeButton = wx.Button(self.panel, id=902, label=f"{self.code}")
             self.frame.Bind(wx.EVT_BUTTON, self.reloadCode, id=902)
@@ -50,23 +52,18 @@ class AbstractFrame(ABC):
             self.codeBox.Add(self.keyCode, proportion=1, flag=wx.CENTER | wx.ALL, border=10)
             self.codeBox.Add(self.codeButton, proportion=1, flag=wx.CENTER | wx.ALL, border=10)
         # ------------------------根据我的情境需求添加的
-
         self.frame.Center()
         self.frame.SetMenuBar(self.menuBar)
-
     @abstractmethod
     def onClick(self, event):
         pass
-
     # 提前给下级面板封装的‘点击触发 会返回到上级面板’
     def comeToBack(self, event):
         self.frame.Hide()
         self.returntoback()
-
     # 要传递给下级面板的 用来返回当前面版的函数
     def returnToBack(self):
         self.frame.Show()
-
     def onClickMenu(self, event):
         eventId = event.GetId()
         if eventId == 903:
@@ -78,11 +75,9 @@ class AbstractFrame(ABC):
         elif eventId == 906:
             Save(self.aams)
             MessageFrame("手动保存成功!")
-
     def reloadCode(self, event):
         self.code = outCode()
         self.codeButton.SetLabel(f"{self.code}")
-
 
 class MessageFrame(wx.Dialog):
     def __init__(self, message):

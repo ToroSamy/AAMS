@@ -1,7 +1,7 @@
 import wx
 
 
-from GlobalFunc.Frame import AbstractFrame
+from GlobalFunc.Frame import AbstractFrame, TextFrame
 from ManagerSystem.StudentFunc import SetMyTeacher
 
 
@@ -26,8 +26,8 @@ class StudentManage(AbstractFrame):
             frm = SetMyTeacher("设置我的老师",self.returnToBack,self.aams,self.loc)
             frm.frame.SetSize(300, 401)
         elif eventId == 3:
-            self.aams.studentList[self.loc].showMyInfo()
+            TextFrame(self.aams.studentList[self.loc].showMyInfo())
         elif eventId == 4:
             self.frame.Hide()
-            frm = self.aams.studentList[self.loc].UpdateMyInfo("修改我的信息",self.returnToBack,self.aams,self.loc)
+            frm = self.aams.studentList[self.loc].UpdateMyInfo("修改我的信息",self.returnToBack,self.aams,self.loc,self.aams.studentList[self.loc])
             frm.frame.SetSize(300, 401)

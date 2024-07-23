@@ -1,7 +1,7 @@
 import wx
 
 
-from GlobalFunc.Frame import AbstractFrame
+from GlobalFunc.Frame import AbstractFrame, TextFrame
 from ManagerSystem.TeacherFunc import AddMyStudent, FindMyStudentButton, DelMyStudentButton, \
     UpdateMyStudentButton, showMyAllStudent
 
@@ -32,7 +32,7 @@ class TeacherManage(AbstractFrame):
             frm = AddMyStudent("添加单名学生",self.returnToBack,self.aams,self.loc)
             frm.frame.SetSize(300, 401)
         elif eventId == 3:
-            self.aams.teacherList[self.loc].showMyInfo()
+            TextFrame(self.aams.teacherList[self.loc].showMyInfo())
         elif eventId == 4:
             self.frame.Hide()
             frm = FindMyStudentButton("查找单名学生",self.returnToBack,self.aams,self.loc)
@@ -49,5 +49,5 @@ class TeacherManage(AbstractFrame):
             showMyAllStudent(self.aams,self.loc)
         elif eventId == 8:
             self.frame.Hide()
-            frm = self.aams.teacherList[self.loc].UpdateMyInfo("修改我的信息",self.returnToBack,self.aams,self.loc)
+            frm = self.aams.teacherList[self.loc].UpdateMyInfo("修改我的信息",self.returnToBack,self.aams,self.loc,self.aams.teacherList[self.loc])
             frm.frame.SetSize(300, 401)

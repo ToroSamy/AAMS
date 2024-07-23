@@ -1,6 +1,6 @@
 import os
 
-from GlobalFunc.FileManage import Save
+
 from Person.Admin import Admin
 from Person.Student import Student
 from Person.Teacher import Teacher
@@ -59,7 +59,7 @@ def initStudentList(StuList):
 
 
 def initAdminList(AdminList):
-    if not os.path.exists(AFile):
+    if not os.path.exists(AFile) or os.path.getsize(AFile) == 0:
         with open(AFile, 'w'):
             adminName = "admin12138"
             adminPassword = "12138"
@@ -79,4 +79,3 @@ def initList(GlobalPanel):
     initAdminList(GlobalPanel.adminList)
     initStudentList(GlobalPanel.studentList)
     initTeacherList(GlobalPanel.teacherList)
-    Save(GlobalPanel)

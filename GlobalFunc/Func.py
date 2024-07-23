@@ -32,7 +32,7 @@ def checkUserIdNumber(mid):
     length = len(mid)
     if length != 18:
         return "身份证必须是18位!", False
-    if not mid[0:17].isalnum():
+    if not mid[0:17].isdigit():
         return "身份证前17位必须是数字!", False
     if not ((mid[17].isdigit()) or (mid[17] == 'x') or (mid[17] == 'X')):
         return "身份证最后一位必须是X、x或数字!", False

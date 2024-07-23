@@ -43,7 +43,7 @@ class LoginFrame(AbstractFrame):
                     elif group == 2:
                         self.frame.Hide()
                         frm = TeacherManage("欢迎教师 "+f"{self.aams.teacherList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)
-                        frm.frame.SetSize(300, 401)
+                        frm.frame.SetSize(300, 501)
                     elif group == 3:
                         self.frame.Hide()
                         frm = StudentManage("欢迎学生 "+f"{self.aams.studentList[loc].mName} 进入管理系统!",self.returnToBack,self.aams,loc)

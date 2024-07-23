@@ -128,6 +128,7 @@ class DelMyStudentButton(AbstractFrame):
                 if index == -1:
                     MessageFrame(f"未找到该学生!")
                 else:
+                    self.aams.studentList[loc].mMyTeacName="null"
                     del self.aams.teacherList[self.loc].mOwnStudentList[index]
                     Save(self.aams)
                     MessageFrame(f"删除成功!")

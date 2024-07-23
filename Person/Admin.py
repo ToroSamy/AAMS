@@ -1,4 +1,3 @@
-from GlobalFunc.Frame import TextFrame
 from Person.Person import Person
 
 
@@ -12,15 +11,16 @@ class Admin(Person):
         personList += f"身份证:{self.mId}\n"
         personList += f"年龄:{self.mAge}\n"
         personList += f"手机号:{self.mPhoneNumber}\n"
-        TextFrame(personList)
-    def updateMyInfo(self,person):
-        self.mName = person.mName
-        self.mName = person.name
-        self.mId = person.mid
-        self.mPassWord = person.password
-        self.mPhoneNumber = person.phonenumber
-        self.mSex = person.sex
-        age = 2024 - int(person.mid[6:10])
+        return personList
+        #TextFrame(personList)
+    def updateMyInfo(self,personBasicInfoList):
+        self.mName = personBasicInfoList[0]
+        self.mId = personBasicInfoList[1]
+        self.mPassWord = personBasicInfoList[2]
+        self.mPhoneNumber = personBasicInfoList[3]
+        self.mSex = personBasicInfoList[4]
+        year = personBasicInfoList[1]
+        age = 2024 - int(year[6:10])
         if age > 0:
             self.mAge = age
         else:

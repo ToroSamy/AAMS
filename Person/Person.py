@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 import wx
 
 from GlobalFunc.FileManage import Save
@@ -16,12 +18,13 @@ class Person:
         self.mPassWord = password
         self.mPhoneNumber = phonenumber
         self.mSex = sex
-        self.mUpdataInfo = self.UpdateMyInfo
         age = 2024 - int(mid[6:10])
         if age > 0:
             self.mAge = age
         else:
             self.mAge = 0
+
+    @abstractmethod
     def updateMyInfo(self,person):
         pass
     def showMyInfo(self):
@@ -61,12 +64,10 @@ class Person:
                 userKeyPassword1 = self.passwordValue1.GetValue()
                 userKeyPassword2 = self.passwordValue2.GetValue()
                 userChoiceSex = self.sexButton[1].GetWindow().GetValue()
-                person = self.returnPerson(userKeyName, userKeyId, userKeyPhone, userKeyPassword1,
+                self.returnPerson(userKeyName, userKeyId, userKeyPhone, userKeyPassword1,
                                                              userKeyPassword2,
                                                              userChoiceSex)
-                self.personInstance.updateMyInfo(person)
-                Save(self.aams)
-                MessageFrame(f"修改成功!")
+
 
 
         def returnPerson(self, name, mid, phone, password1, password2, userChoiceSex):
@@ -97,7 +98,11 @@ class Person:
             else:
                 sex = "女"
 
-            return Person(name, mid, password1, phone, sex)
+            personBasicInfoList = [name, mid, password1, phone, sex]
+
+            self.personInstance.updateMyInfo(personBasicInfoList)
+            Save(self.aams)
+            MessageFrame(f"修改成功!")
 
 
 

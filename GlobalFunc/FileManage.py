@@ -42,10 +42,6 @@ def TeacherListSave(TeacherList):
                                 f'{sobj.mSex},'
                                 f'{sobj.mAge}\n')
 
-
-
-
-
 def Save(GlobalPanel):
     StudentListSave(GlobalPanel.studentList)
     AdminListSave(GlobalPanel.adminList)

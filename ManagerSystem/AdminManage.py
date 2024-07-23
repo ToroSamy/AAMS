@@ -1,9 +1,9 @@
 import wx
 
-
-from GlobalFunc.Frame import AbstractFrame
-from ManagerSystem.AdminFunc import AddOneTeacher, DelOneTeacherButton, FindOneTeacherButton, showAllTeacherButton, \
-    AddOneStudent, showAllStudentButton, FindOneStudentButton, DelOneStudentButton, AddOneAdmin
+from Frame.AddOnePerson import AddOnePerson
+from GlobalFunc.Frame import AbstractFrame, TextFrame
+from ManagerSystem.AdminFunc import (DelOneTeacherButton, FindOneTeacherButton, showAllTeacherButton,
+                                     showAllStudentButton, FindOneStudentButton, DelOneStudentButton)
 
 
 class AdminManage(AbstractFrame):
@@ -34,14 +34,14 @@ class AdminManage(AbstractFrame):
             frm.frame.SetSize(300, 401)
         elif eventId == 3:
             self.frame.Hide()
-            frm = AddOneAdmin("添加单名管理",self.returnToBack,self.aams,self.loc)
+            frm = AddOnePerson("添加单名管理",self.returnToBack,self.aams,"1")
             frm.frame.SetSize(300, 401)
         elif eventId == 4:
             self.frame.Hide()
             frm = self.aams.adminList[self.loc].UpdateMyInfo("修改我的信息",self.returnToBack,self.aams,self.loc,self.aams.adminList[self.loc])
             frm.frame.SetSize(300, 401)
         elif eventId == 5:
-            self.aams.adminList[self.loc].showMyInfo()
+            TextFrame(self.aams.adminList[self.loc].showMyInfo())
 class AdminTeacherPanel(AbstractFrame):
     def __init__(self, title,returntoback,aams, loc):
         super().__init__(title,returntoback,aams, loc)
@@ -64,7 +64,7 @@ class AdminTeacherPanel(AbstractFrame):
             self.returntoback()
         elif eventId == 2:
             self.frame.Hide()
-            frm = AddOneTeacher("添加单名教师",self.returnToBack,self.aams,self.loc)
+            frm = AddOnePerson("添加单名教师",self.returnToBack,self.aams,"2")
             frm.frame.SetSize(300, 401)
         elif eventId == 3:
             showAllTeacherButton(self.aams)
@@ -97,7 +97,7 @@ class AdminStudentPanel(AbstractFrame):
             self.returntoback()
         elif eventId == 2:
             self.frame.Hide()
-            frm = AddOneStudent("添加单名学生",self.returnToBack,self.aams,self.loc)
+            frm = AddOnePerson("添加单名学生",self.returnToBack,self.aams,"3")
             frm.frame.SetSize(300, 401)
         elif eventId == 3:
             showAllStudentButton(self.aams)

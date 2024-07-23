@@ -1,15 +1,18 @@
 import wx
 
+from Frame.AddOnePerson import AddOnePerson
 from Frame.FindPasswordFrame import FindPasswordFrame
 from Frame.LoginFrame import LoginFrame
-from Frame.RegisterFrame import RegisterFrame
+
 from GlobalFunc.FileManage import Save
 
 from GlobalFunc.Frame import MessageFrame
-from GlobalFunc.Func import checkUserName, checkUserPhoneNumber, checkUserIdNumber
+from GlobalFunc.Func import checkUserName, checkUserPhoneNumber, checkUserIdNumber, outCode
 from GlobalFunc.InitManage import initList
+from Person.Admin import Admin
 
 from Person.Student import Student
+from Person.Teacher import Teacher
 
 
 class AcademicAffairsManagementSystemPython:
@@ -51,10 +54,8 @@ class AcademicAffairsManagementSystemPython:
             if group == 0:
                 return cls.findStudent(name)
             return group, loc
-
         elif choice == 1:
             return cls.findAdmin(name)
-
         elif choice == 2:
             return cls.findTeacher(name)
         return cls.findStudent(name)
@@ -88,14 +89,21 @@ class AcademicAffairsManagementSystemPython:
         return False
 
     @classmethod
-    def registerUser(cls, name, mid, phone, password1, password2,sex, userkeycode, code):
+    def addOnePerson(cls, name, mid, phone, password1, password2,ifSex, choice,userkeycode="0", code="0"):
         messageName, booleanName = checkUserName(name)
+        if choice == "has":
+            if not code == userkeycode:
+                MessageFrame(f"验证码输入有误!")
+                return
         if not booleanName:
             MessageFrame(f"{messageName}")
             return
+        if name == "admin12138":
+            MessageFrame(f"用户名与默认管理员用户名一致")
+            return
         group, loc = cls.locNameRepeat(name, 0)
         if loc != -1:
-            MessageFrame(f"该用户已存在 请勿重复注册!")
+            MessageFrame(f"该用户名已被使用!")
             return
         messageId, booleanId = checkUserIdNumber(mid)
         if not booleanId:
@@ -105,20 +113,33 @@ class AcademicAffairsManagementSystemPython:
         if not booleanPhone:
             MessageFrame(f"{messagePhone}")
             return
+        if password1 == "":
+            MessageFrame(f"密码不能留空!")
+            return
         if not password1 == password2:
             MessageFrame(f"密码不一致,请重新输入!")
             return
-        if not code == userkeycode:
-            MessageFrame(f"验证码输入有误!")
-            return
-        if sex:
-            student = Student(name, mid, password1, phone,"男")
+        if ifSex:
+            sex = "男"
         else:
-            student = Student(name, mid, password1, phone, "女")
-        cls.studentList.append(student)
+            sex = "女"
+        if choice == "1":
+            person = Admin(name, mid, password1, phone,sex)
+            cls.adminList.append(person)
+            MessageFrame(f"添加成功!")
+        elif choice == "2":
+            person = Teacher(name, mid, password1, phone, sex,outCode())
+            cls.teacherList.append(person)
+            MessageFrame(f"添加成功!")
+        elif choice == "3":
+            person = Student(name, mid, password1, phone, sex)
+            cls.studentList.append(person)
+            MessageFrame(f"添加成功!")
+        elif choice == "has":
+            person = Student(name, mid, password1, phone, sex)
+            cls.studentList.append(person)
+            MessageFrame(f"注册成功!")
         Save(cls)
-        MessageFrame(f"注册成功!")
-
     @classmethod
     def findPassword(cls, name, mid, phone):
         message, boolean = checkUserName(name)
@@ -197,13 +218,12 @@ class StartFrame(wx.Frame):
             frm.frame.SetSize(300, 401)
         elif eventId == 2:
             self.Hide()
-            frm = RegisterFrame('注册界面', self.returnToBack, self.aams)
+            frm = AddOnePerson('注册界面', self.returnToBack, self.aams)
             frm.frame.SetSize(300, 401)
         elif eventId == 3:
             self.Hide()
             frm = FindPasswordFrame('找回密码', self.returnToBack, self.aams)
             frm.frame.SetSize(300, 401)
-
     def returnToBack(self):
         self.Show()
 
@@ -212,18 +232,12 @@ aams = AcademicAffairsManagementSystemPython()
 
 
 
-aams.updateLog += "Version:1.4\n"
-aams.updateLog += "1.修复了管理员功能界面冲突的bug\n"
-aams.updateLog += "2.添加了默认生成管理员\n"
-aams.updateLog += "3.添加了管理员修改自身信息功能\n"
-aams.updateLog += "4.修改了管理员功能代码布局\n"
-aams.updateLog += "5.进一步完善管理员功能\n"
-aams.updateLog += "6.进一步利用多态\n"
-aams.updateLog += "7.将初始化与保存拆分以修复循环导入问题\n"
-aams.updateLog += "8.修复管理员子界面跳转问题\n"
+aams.updateLog += "Version:1.5\n"
+aams.updateLog += "1.修复了无法通过多态修改信息问题\n"
+aams.updateLog += "2.抽象化了添加人功能\n"
+aams.updateLog += "3.更改了部分细节\n"
+aams.updateLog += "4.文件为空时的初始化\n"
 aams.updateLog += "后续可能考虑的问题-----------\n"
-aams.updateLog += "文件为空时的初始化\n"
-aams.updateLog += "管理员添加人物与注册添加抽象化\n"
 aams.updateLog += "\"比如 你的用户名框框 不是有字 我点了框框之后 字最好自己消失\"\n"
 
 initList(aams)
