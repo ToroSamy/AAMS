@@ -25,7 +25,7 @@ def setButtons(panel, myDict, label,choice=0):
     for key in keys:
         keyList.append(key)
         valueList.append(myDict[key])
-    if choice != 0:
+    if choice == 0:
         button = wx.RadioButton(panel, id=keyList[0], label=valueList[0],style=wx.RB_GROUP)
         box.Add(button, proportion=1, flag=wx.EXPAND)
         for i in range(number):

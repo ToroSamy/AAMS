@@ -107,7 +107,7 @@ class MessageFrame(wx.Dialog):
 
 class TextFrame(wx.Dialog):
     def __init__(self, info):
-        super().__init__(None, title="信息如下", size=(600, 600), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
+        super().__init__(None, title="信息如下", size=(700, 300), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
         panel = wx.Panel(self)
 
         text = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY)

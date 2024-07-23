@@ -85,7 +85,7 @@ class AcademicAffairsManagementSystemPython:
         return False
 
     @classmethod
-    def registerUser(cls, name, mid, phone, password1, password2, userkeycode, code):
+    def registerUser(cls, name, mid, phone, password1, password2,sex, userkeycode, code):
         messageName, booleanName = checkUserName(name)
         if not booleanName:
             MessageFrame(f"{messageName}")
@@ -108,7 +108,10 @@ class AcademicAffairsManagementSystemPython:
         if not code == userkeycode:
             MessageFrame(f"验证码输入有误!")
             return
-        student = Student(name, mid, password1, phone)
+        if sex:
+            student = Student(name, mid, password1, phone,"男")
+        else:
+            student = Student(name, mid, password1, phone, "女")
         cls.studentList.append(student)
         Save(cls)
         MessageFrame(f"注册成功!")
@@ -205,11 +208,10 @@ class StartFrame(wx.Frame):
 gp = AcademicAffairsManagementSystemPython()
 initList(gp)
 
-gp.updateLog += "Version:1.2\n"
-gp.updateLog += "1.进一步抽象化了有验证码和无验证码的面板\n"
-gp.updateLog += "2.增加了抽象化的图片与提示\n"
-gp.updateLog += "3.抽象化了列表菜单\n"
-gp.updateLog += "4.增加了更新日志入口\n"
+gp.updateLog += "Version:1.3\n"
+gp.updateLog += "1.修复了部分无验证码界面冲突的bug\n"
+gp.updateLog += "2.添加了性别的相关设置\n"
+gp.updateLog += "3.添加了学生修改自身信息的功能\n"
 
 app = wx.App()
 frm = StartFrame(gp)

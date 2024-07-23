@@ -17,6 +17,7 @@ def StudentListSave(StuList):
                        f'{obj.mPassWord},'
                        f'{obj.mPhoneNumber},'
                        f'{obj.mMyTeacName},'
+                       f'{obj.mSex},'
                        f'{obj.mAge}\n')
 
 
@@ -27,13 +28,14 @@ def AdminListSave(AdminList):
                        f'{obj.mId},'
                        f'{obj.mPassWord},'
                        f'{obj.mPhoneNumber},'
+                       f'{obj.mSex},'
                        f'{obj.mAge}\n')
 
 
 def TeacherListSave(TeacherList):
     with open(TFile, 'w') as file:
         for obj in TeacherList:
-            file.write(f'{obj.mName},{obj.mId},{obj.mPassWord},{obj.mPhoneNumber},{obj.mCode},{obj.mAge}\n')
+            file.write(f'{obj.mName},{obj.mId},{obj.mPassWord},{obj.mPhoneNumber},{obj.mCode},{obj.mSex},{obj.mAge}\n')
             stuFilename = 'TFile/TSList/'
             stuFilename += f'{obj.mName}.txt'
             with open(stuFilename, 'w') as sfile:
@@ -43,6 +45,7 @@ def TeacherListSave(TeacherList):
                                 f'{sobj.mPassWord},'
                                 f'{sobj.mPhoneNumber},'
                                 f'{sobj.mMyTeacName},'
+                                f'{sobj.mSex},'
                                 f'{sobj.mAge}\n')
 
 
@@ -62,7 +65,8 @@ def initTeacherList(TeacherList):
             password = teacherStrip[2]
             phone = teacherStrip[3]
             code = teacherStrip[4]
-            teacher = Teacher(name, mid, password, phone, code)
+            sex = teacherStrip[5]
+            teacher = Teacher(name, mid, password, phone,sex, code)
             TeacherList.append(teacher)
 
     for i in range(len(nameList)):
@@ -81,7 +85,8 @@ def initTeacherList(TeacherList):
                 phone = steacherStrip[3]
 
                 tname = nameList[i]
-                student = Student(name, mid, password, phone, tname)
+                sex = steacherStrip[5]
+                student = Student(name, mid, password, phone,sex, tname)
                 TeacherList[i].mOwnStudentList.append(student)
 
 
@@ -98,7 +103,7 @@ def initStudentList(StuList):
     with open(SFile, 'r') as file:
         for line in file:
             studentStrip = line.strip().split(',')  # 碎片化一个学生
-            student = Student(studentStrip[0], studentStrip[1], studentStrip[2], studentStrip[3], studentStrip[4])
+            student = Student(studentStrip[0], studentStrip[1], studentStrip[2], studentStrip[3],studentStrip[5], studentStrip[4])
             StuList.append(student)
 
 
@@ -109,7 +114,7 @@ def initAdminList(AdminList):
     with open(AFile, 'r') as file:
         for line in file:
             adminStrip = line.strip().split(',')
-            admin = Admin(adminStrip[0], adminStrip[1], adminStrip[2], adminStrip[3])
+            admin = Admin(adminStrip[0], adminStrip[1], adminStrip[2], adminStrip[3], adminStrip[4])
             AdminList.append(admin)
 
 

@@ -3,7 +3,7 @@ import wx
 from GlobalFunc.FileManage import Save
 
 from GlobalFunc.Frame import TextFrame, MessageFrame, AbstractFrame
-from GlobalFunc.FrameParts import setTextBox
+from GlobalFunc.FrameParts import setTextBox, setButtons
 from GlobalFunc.Func import checkUserName, checkUserIdNumber, checkUserPhoneNumber
 
 from Person.Student import Student
@@ -61,6 +61,7 @@ def showMyAllStudent(aams, loc):
     StudentInfo = ''
     for i in range(number):
         StudentInfo += f"姓名:{aams.teacherList[loc].mOwnStudentList[i].mName}   "
+        StudentInfo += f"性别:{aams.teacherList[loc].mOwnStudentList[i].mSex}   "
         StudentInfo += f"身份证:{aams.teacherList[loc].mOwnStudentList[i].mId}   "
         StudentInfo += f"年龄:{aams.teacherList[loc].mOwnStudentList[i].mAge}   "
         StudentInfo += f"手机号:{aams.teacherList[loc].mOwnStudentList[i].mPhoneNumber}\n"
@@ -153,6 +154,11 @@ class UpdateMyStudentButton(AbstractFrame):
         self.nameValue,name = setTextBox(self.panel,"用户名","请输入用户名")
         self.idValue,mid = setTextBox(self.panel,"身份证","请输入身份证")
         self.phoneValue,phone = setTextBox(self.panel,"手机号","请输入手机号")
+
+        sexDict = {1: "男", 2: "女"}
+        sexButton = setButtons(self.panel,sexDict,"性别")
+        self.sexButton = sexButton.GetChildren()
+
         self.passwordValue1,password1 = setTextBox(self.panel,"输入密码","",1)
         self.passwordValue2,password2 = setTextBox(self.panel,"重复密码","",1)
 
@@ -163,6 +169,7 @@ class UpdateMyStudentButton(AbstractFrame):
         self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         self.vbox.Add(mid, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         self.vbox.Add(phone, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(sexButton, proportion=1, flag=wx.CENTER)
         self.vbox.Add(password1, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         self.vbox.Add(password2, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         self.vbox.Add(updateButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
@@ -178,9 +185,10 @@ class UpdateMyStudentButton(AbstractFrame):
             userKeyPhone = self.phoneValue.GetValue()
             userKeyPassword1 = self.passwordValue1.GetValue()
             userKeyPassword2 = self.passwordValue2.GetValue()
-            self.updateMyStudentButton(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2)
+            userChoiceSex = self.sexButton[1].GetWindow().GetValue()
+            self.updateMyStudentButton(userKeyName, userKeyId, userKeyPhone, userChoiceSex,userKeyPassword1, userKeyPassword2)
 
-    def updateMyStudentButton(self, userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2):
+    def updateMyStudentButton(self, userKeyName, userKeyId, userKeyPhone,userChoiceSex, userKeyPassword1, userKeyPassword2):
         messageName, booleanName = checkUserName(userKeyName)
         if not booleanName:
             MessageFrame(f"{messageName}")
@@ -204,7 +212,11 @@ class UpdateMyStudentButton(AbstractFrame):
         if not userKeyPassword1 == userKeyPassword2:
             MessageFrame(f"密码不一致,请重新输入!")
             return
-        self.aams.studentList[loc] = Student(userKeyName, userKeyId, userKeyPassword1, userKeyPhone)
+        if userChoiceSex:
+            sex = "男"
+        else:
+            sex = "女"
+        self.aams.studentList[loc] = Student(userKeyName, userKeyId, userKeyPassword1, userKeyPhone,sex)
         self.aams.teacherList[self.loc].mOwnStudentList[index] = self.aams.studentList[loc]
         Save(self.aams)
         MessageFrame(f"修改成功!")

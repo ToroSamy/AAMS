@@ -3,7 +3,7 @@ import wx
 from GlobalFunc.FileManage import Save
 
 from GlobalFunc.Frame import TextFrame, MessageFrame, AbstractFrame
-from GlobalFunc.FrameParts import setTextBox
+from GlobalFunc.FrameParts import setTextBox, setButtons
 from GlobalFunc.Func import checkUserName, checkUserIdNumber, checkUserPhoneNumber, outCode
 from Person.Teacher import Teacher
 from Person.Student import Student
@@ -31,15 +31,16 @@ class AdminTeacherPanel(AbstractFrame):
             self.returntoback()
         elif eventId == 2:
             self.frame.Hide()
-            self.AddOneTeacher("添加单名教师",self.returntoback,self.aams)
+            frm = self.AddOneTeacher("添加单名教师",self.returntoback,self.aams,"1")
+            frm.frame.SetSize(300, 501)
         elif eventId == 3:
             self.showAllTeacherButton(self.aams)
         elif eventId == 4:
             self.frame.Hide()
-            self.FindOneTeacherButton("查看单名教师",self.returntoback,self.aams)
+            self.FindOneTeacherButton("查看单名教师",self.returntoback,self.aams,"1")
         elif eventId == 5:
             self.frame.Hide()
-            self.DelOneTeacherButton("删除单名教师",self.returntoback,self.aams)
+            self.DelOneTeacherButton("删除单名教师",self.returntoback,self.aams,"1")
 
     class AddOneTeacher(AbstractFrame):
         def __init__(self, title, returntoback, aams,loc):
@@ -47,6 +48,11 @@ class AdminTeacherPanel(AbstractFrame):
             self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
             self.idValue, mid = setTextBox(self.panel, "身份证", '请输入身份证')
             self.phoneValue, phone = setTextBox(self.panel, "手机号", '请输入手机号')
+
+            sexDict = {1: "男", 2: "女"}
+            sexButton = setButtons(self.panel, sexDict, "性别")
+            self.sexButton = sexButton.GetChildren()
+
             self.passwordValue1, password1 = setTextBox(self.panel, "输入密码", '', 1)
             self.passwordValue2, password2 = setTextBox(self.panel, "重复密码", '', 1)
             addButton = wx.Button(self.panel, id=1, label="点击添加")
@@ -54,6 +60,7 @@ class AdminTeacherPanel(AbstractFrame):
             self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(mid, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(phone, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(sexButton, proportion=1, flag=wx.CENTER)
             self.vbox.Add(password1, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(password2, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(addButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
@@ -68,8 +75,9 @@ class AdminTeacherPanel(AbstractFrame):
                 userKeyPhone = self.phoneValue.GetValue()
                 userKeyPassword1 = self.passwordValue1.GetValue()
                 userKeyPassword2 = self.passwordValue2.GetValue()
-                self.addOneTeacher(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2)
-        def addOneTeacher(self, userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2):
+                userChoiceSex = self.sexButton[1].GetWindow().GetValue()
+                self.addOneTeacher(userKeyName, userKeyId, userKeyPhone,userChoiceSex, userKeyPassword1, userKeyPassword2)
+        def addOneTeacher(self, userKeyName, userKeyId, userKeyPhone,userChoiceSex, userKeyPassword1, userKeyPassword2):
             messageName, booleanName = checkUserName(userKeyName)
             if not booleanName:
                 MessageFrame(f"{messageName}")
@@ -89,7 +97,10 @@ class AdminTeacherPanel(AbstractFrame):
             if not userKeyPassword1 == userKeyPassword2:
                 MessageFrame(f"密码不一致,请重新输入!")
                 return
-            teacher = Teacher(userKeyName, userKeyId, userKeyPassword1, userKeyPhone, outCode())
+            if userChoiceSex:
+                teacher = Teacher(userKeyName, userKeyId, userKeyPassword1, userKeyPhone, "男", outCode())
+            else:
+                teacher = Teacher(userKeyName, userKeyId, userKeyPassword1, userKeyPhone, "女", outCode())
             self.aams.teacherList.append(teacher)
             Save(self.aams)
             MessageFrame(f"添加成功!")
@@ -100,6 +111,7 @@ class AdminTeacherPanel(AbstractFrame):
         teacherInfo = ''
         for i in range(number):
             teacherInfo += f"姓名:{aams.teacherList[i].mName}   "
+            teacherInfo += f"性别:{aams.teacherList[i].mSex}   "
             teacherInfo += f"身份证:{aams.teacherList[i].mId}   "
             teacherInfo += f"年龄:{aams.teacherList[i].mAge}   "
             teacherInfo += f"手机号:{aams.teacherList[i].mPhoneNumber}   "
@@ -175,7 +187,7 @@ class AdminStudentPanel(AbstractFrame):
             self.returntoback()
         elif eventId == 2:
             self.frame.Hide()
-            self.AddOneStudent("添加单名学生",self.returntoback,self.aams)
+            self.AddOneStudent("添加单名学生",self.returntoback,self.aams,1)
         elif eventId == 3:
             self.showAllStudentButton(self.aams)
         elif eventId == 4:
@@ -183,19 +195,27 @@ class AdminStudentPanel(AbstractFrame):
             self.FindOneStudentButton("查看单名学生",self.returntoback,self.aams,self.loc)
         elif eventId == 5:
             self.frame.Hide()
-            self.DelOneStudentButton("删除单名学生",self.returntoback,self.aams)
+            self.DelOneStudentButton("删除单名学生",self.returntoback,self.aams,1)
     class AddOneStudent(AbstractFrame):
         def __init__(self, title,returntoback,aams,loc):
             super().__init__(title,returntoback,aams,loc)
             self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
             self.idValue, mid = setTextBox(self.panel, "身份证", '请输入身份证')
             self.phoneValue, phone = setTextBox(self.panel, "手机号", '请输入手机号')
+
+            sexDict = {1: "男", 2: "女"}
+            sexButton = setButtons(self.panel, sexDict, "性别")
+            self.sexButton = sexButton.GetChildren()
+
             self.passwordValue1, password1 = setTextBox(self.panel, "输入密码", '',1)
             self.passwordValue2, password2 = setTextBox(self.panel, "重复密码", '',1)
             addButton = wx.Button(self.panel, id=1, label="点击添加")
             self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(mid, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(phone, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+
+            self.vbox.Add(sexButton, proportion=1, flag=wx.CENTER)
+
             self.vbox.Add(password1, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(password2, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             self.vbox.Add(addButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
@@ -210,8 +230,9 @@ class AdminStudentPanel(AbstractFrame):
                 userKeyPhone = self.phoneValue.GetValue()
                 userKeyPassword1 = self.passwordValue1.GetValue()
                 userKeyPassword2 = self.passwordValue2.GetValue()
-                self.addOneStudent(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2)
-        def addOneStudent(self, userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2):
+                userChoiceSex = self.sexButton[1].GetWindow().GetValue()
+                self.addOneStudent(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2,userChoiceSex)
+        def addOneStudent(self, userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2,userChoiceSex):
             messageName, booleanName = checkUserName(userKeyName)
             if not booleanName:
                 MessageFrame(f"{messageName}")
@@ -231,7 +252,10 @@ class AdminStudentPanel(AbstractFrame):
             if not userKeyPassword1 == userKeyPassword2:
                 MessageFrame(f"密码不一致,请重新输入!")
                 return
-            student = Student(userKeyName, userKeyId, userKeyPassword1, userKeyPhone)
+            if userChoiceSex:
+                student = Student(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, "男")
+            else:
+                student = Student(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, "女")
             self.aams.studentList.append(student)
             Save(self.aams)
             MessageFrame(f"添加成功!")
@@ -242,6 +266,7 @@ class AdminStudentPanel(AbstractFrame):
         StudentInfo = ''
         for i in range(number):
             StudentInfo += f"姓名:{aams.studentList[i].mName}   "
+            StudentInfo += f"性别:{aams.studentList[i].mSex}   "
             StudentInfo += f"身份证:{aams.studentList[i].mId}   "
             StudentInfo += f"年龄:{aams.studentList[i].mAge}   "
             StudentInfo += f"手机号:{aams.studentList[i].mPhoneNumber}   "
