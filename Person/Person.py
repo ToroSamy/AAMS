@@ -1,7 +1,7 @@
 class Person:
 
 
-    def __init__(self, name, mid:str, password, phonenumber):
+    def __init__(self, name, mid, password, phonenumber):
         self.mName = name
         self.mId = mid
         self.mPassWord = password

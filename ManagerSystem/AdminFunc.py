@@ -1,580 +1,298 @@
 import wx
 
-from FileManage import Save
-from Frame.ErrorFrame import ErrorFrame, MessageFrame
-from GlobalPanel import checkUserName, checkUserIdNumber, checkUserPhoneNumber, outCode
+from GlobalFunc.FileManage import Save
+
+from GlobalFunc.Frame import TextFrame, MessageFrame, AbstractFrame
+from GlobalFunc.FrameParts import setTextBox
+from GlobalFunc.Func import checkUserName, checkUserIdNumber, checkUserPhoneNumber, outCode
 from Person.Teacher import Teacher
 from Person.Student import Student
 
 
-class AdminTeacherPanel(wx.Frame):
-    def __init__(self, globalpanel, loc, returntoback):
-        super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                         size=(300, 270), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-        panel = wx.Panel(self)
+class AdminTeacherPanel(AbstractFrame):
+    def __init__(self, title,returntoback,aams, loc):
+        super().__init__(title,returntoback,aams, loc)
+        addOneTeacherButton = wx.Button(self.panel, id=2, label="添加单名教师")
+        showAllTeacherButton = wx.Button(self.panel, id=3, label="查看所有教师")
+        findOneTeacherButton = wx.Button(self.panel, id=4, label="查看单名教师")
+        delOneTeacherButton = wx.Button(self.panel, id=5, label="删除单名教师")
+        self.vbox.Add(addOneTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(showAllTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(findOneTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(delOneTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.frame.Show()
 
-        exitAdminTeacherButton = wx.Button(parent=panel, id=1, label="退出教师管理", pos=(50, 10))
-        addOneTeacherButton = wx.Button(parent=panel, id=2, label="添加单名教师", pos=(50, 10))
-        showAllTeacherButton = wx.Button(parent=panel, id=3, label="查看所有教师", pos=(50, 10))
-        findOneTeacherButton = wx.Button(parent=panel, id=4, label="查看单名教师", pos=(50, 10))
-        delOneTeacherButton = wx.Button(parent=panel, id=5, label="删除单名教师", pos=(50, 10))
-
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(exitAdminTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(addOneTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(showAllTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(findOneTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(delOneTeacherButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-
-        panel.SetSizer(vbox)
-        self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=5)
-        self.gp = globalpanel
-        self.loc = loc
-        self.returntoback = returntoback
 
     def onClick(self, event):
         eventId = event.GetId()
         if eventId == 1:
-            self.Hide()
+            self.frame.Hide()
             self.returntoback()
         elif eventId == 2:
-            self.Hide()
-            addOneTeacher = self.AddOneTeacher(self.gp, self.loc, self.returnToBack)
-            addOneTeacher.Show()
+            self.frame.Hide()
+            self.AddOneTeacher("添加单名教师",self.returntoback,self.aams)
         elif eventId == 3:
-            self.showAllTeacherButton(self.gp)
+            self.showAllTeacherButton(self.aams)
         elif eventId == 4:
-            self.Hide()
-            findOneTeacher = self.FindOneTeacherButton(self.gp, self.loc, self.returnToBack)
-            findOneTeacher.Show()
+            self.frame.Hide()
+            self.FindOneTeacherButton("查看单名教师",self.returntoback,self.aams)
         elif eventId == 5:
-            self.Hide()
-            delOneTeacherButton = self.DelOneTeacherButton(self.gp, self.loc, self.returnToBack)
-            delOneTeacherButton.Show()
+            self.frame.Hide()
+            self.DelOneTeacherButton("删除单名教师",self.returntoback,self.aams)
 
-    def returnToBack(self):
-        self.Show()
+    class AddOneTeacher(AbstractFrame):
+        def __init__(self, title, returntoback, aams,loc):
+            super().__init__(title, returntoback, aams,loc)
+            self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
+            self.idValue, mid = setTextBox(self.panel, "身份证", '请输入身份证')
+            self.phoneValue, phone = setTextBox(self.panel, "手机号", '请输入手机号')
+            self.passwordValue1, password1 = setTextBox(self.panel, "输入密码", '', 1)
+            self.passwordValue2, password2 = setTextBox(self.panel, "重复密码", '', 1)
+            addButton = wx.Button(self.panel, id=1, label="点击添加")
 
-    class AddOneTeacher(wx.Frame):
-        def __init__(self, globalpanel, loc, returntoback):
-            super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                             size=(300, 310), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-            panel = wx.Panel(self)
-            userNameMesaage = wx.StaticText(parent=panel, label="用户名")
-            self.userNameTextCtrl = wx.TextCtrl(panel)
-            self.userNameTextCtrl.SetValue('请输入用户名')
-
-            userIdMesaage = wx.StaticText(parent=panel, label="身份证")
-            self.userIdTextCtrl = wx.TextCtrl(panel)
-            self.userIdTextCtrl.SetValue('请输入身份证')
-
-            userPhoneMesaage = wx.StaticText(parent=panel, label="手机号")
-            self.userPhoneTextCtrl = wx.TextCtrl(panel)
-            self.userPhoneTextCtrl.SetValue('请输入手机号')
-
-            # 密码
-            passwordMessage1 = wx.StaticText(parent=panel, label="输入密码")
-            self.passwordTextCtrl1 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
-
-            passwordMessage2 = wx.StaticText(parent=panel, label="重复密码")
-            self.passwordTextCtrl2 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
-
-            addButton = wx.Button(parent=panel, id=1, label="点击添加", pos=(100, 50))
-            returnButton = wx.Button(parent=panel, id=2, label="点击返回", pos=(100, 50))
-
-            hboxName = wx.BoxSizer(wx.HORIZONTAL)
-            hboxName.Add(userNameMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxName.Add(self.userNameTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxId = wx.BoxSizer(wx.HORIZONTAL)
-            hboxId.Add(userIdMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxId.Add(self.userIdTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxPhone = wx.BoxSizer(wx.HORIZONTAL)
-            hboxPhone.Add(userPhoneMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxPhone.Add(self.userPhoneTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxPassword1 = wx.BoxSizer(wx.HORIZONTAL)
-            hboxPassword1.Add(passwordMessage1, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxPassword1.Add(self.passwordTextCtrl1, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxPassword2 = wx.BoxSizer(wx.HORIZONTAL)
-            hboxPassword2.Add(passwordMessage2, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxPassword2.Add(self.passwordTextCtrl2, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            # 创建垂直方向的盒子布局管理器对象vbox
-            vbox1 = wx.BoxSizer(wx.VERTICAL)
-            vbox1.Add(hboxName, proportion=1, flag=wx.CENTER)
-            vbox1.Add(hboxId, proportion=1, flag=wx.CENTER)
-            vbox1.Add(hboxPhone, proportion=1, flag=wx.CENTER)
-
-            vbox2 = wx.BoxSizer(wx.VERTICAL)
-            vbox2.Add(hboxPassword1, proportion=1, flag=wx.CENTER)
-            vbox2.Add(hboxPassword2, proportion=1, flag=wx.CENTER)
-
-            vbox = wx.BoxSizer(wx.VERTICAL)
-            vbox.Add(vbox1, proportion=1, flag=wx.CENTER)
-            vbox.Add(vbox2, proportion=1, flag=wx.CENTER)
-            vbox.Add(addButton, proportion=1, flag=wx.CENTER)
-            vbox.Add(returnButton, proportion=1, flag=wx.CENTER)
-            panel.SetSizer(vbox)
-
-            self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=3)
-            self.gp = globalpanel
-            self.lo = loc
-            self.returntoback = returntoback
-            self.Show()
+            self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(mid, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(phone, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(password1, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(password2, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(addButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.frame.Show()
 
         def onClick(self, event):
             eventId = event.GetId()
             if eventId == 1:
-                userKeyName = self.userNameTextCtrl.GetValue()
-                userKeyId = self.userIdTextCtrl.GetValue()
-                userKeyPhone = self.userPhoneTextCtrl.GetValue()
-                userKeyPassword1 = self.passwordTextCtrl1.GetValue()
-                userKeyPassword2 = self.passwordTextCtrl2.GetValue()
+                userKeyName = self.nameValue.GetValue()
+                userKeyId = self.idValue.GetValue()
+                userKeyPhone = self.phoneValue.GetValue()
+                userKeyPassword1 = self.passwordValue1.GetValue()
+                userKeyPassword2 = self.passwordValue2.GetValue()
                 self.addOneTeacher(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2)
-            elif eventId == 2:
-                self.Hide()
-                self.returntoback()
-
         def addOneTeacher(self, userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2):
             messageName, booleanName = checkUserName(userKeyName)
             if not booleanName:
-                errorFrame = ErrorFrame(f"{messageName}")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"{messageName}")
                 return
-
-            group, loc = self.gp.locNameRepeat(userKeyName, 0)
+            group, loc = self.aams.locNameRepeat(userKeyName, 0)
             if loc != -1:
-                errorFrame = ErrorFrame(f"该用户已存在 请勿重复注册!")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"该用户已存在 请勿重复注册!")
                 return
-
             messageId, booleanId = checkUserIdNumber(userKeyId)
             if not booleanId:
-                errorFrame = ErrorFrame(f"{messageId}")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"{messageId}")
                 return
-
             messagePhone, booleanPhone = checkUserPhoneNumber(userKeyPhone)
             if not booleanPhone:
-                errorFrame = ErrorFrame(f"{messagePhone}")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"{messagePhone}")
                 return
-
             if not userKeyPassword1 == userKeyPassword2:
-                errorFrame = ErrorFrame(f"密码不一致,请重新输入!")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"密码不一致,请重新输入!")
                 return
-
-            code = outCode()
-            teacher = Teacher(userKeyName, userKeyId, userKeyPassword1, userKeyPhone, code)
-            self.gp.teacherList.append(teacher)
-            Save(self.gp)
-            errorFrame = ErrorFrame(f"添加成功!")
-            errorFrame.ShowModal()
-            errorFrame.Destroy()
+            teacher = Teacher(userKeyName, userKeyId, userKeyPassword1, userKeyPhone, outCode())
+            self.aams.teacherList.append(teacher)
+            Save(self.aams)
+            MessageFrame(f"添加成功!")
 
     @classmethod
-    def showAllTeacherButton(cls, gp):
-        number = len(gp.teacherList)
+    def showAllTeacherButton(cls, aams):
+        number = len(aams.teacherList)
         teacherInfo = ''
         for i in range(number):
-            teacherInfo += f"姓名:{gp.teacherList[i].mName}   "
-            teacherInfo += f"身份证:{gp.teacherList[i].mId}   "
-            teacherInfo += f"年龄:{gp.teacherList[i].mAge}   "
-            teacherInfo += f"手机号:{gp.teacherList[i].mPhoneNumber}   "
-            teacherInfo += f"邀请码:{gp.teacherList[i].mCode}\n"
-        messageFrame = MessageFrame(teacherInfo)
+            teacherInfo += f"姓名:{aams.teacherList[i].mName}   "
+            teacherInfo += f"身份证:{aams.teacherList[i].mId}   "
+            teacherInfo += f"年龄:{aams.teacherList[i].mAge}   "
+            teacherInfo += f"手机号:{aams.teacherList[i].mPhoneNumber}   "
+            teacherInfo += f"邀请码:{aams.teacherList[i].mCode}\n"
+        TextFrame(teacherInfo)
 
-    class FindOneTeacherButton(wx.Frame):
-        def __init__(self, globalpanel, loc, returntoback):
-            super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                             size=(300, 140), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-            panel = wx.Panel(self)
-            userNameMesaage = wx.StaticText(parent=panel, label="用户名")
-            self.userNameTextCtrl = wx.TextCtrl(panel)
-            self.userNameTextCtrl.SetValue('请输入用户名')
-
-            hboxName = wx.BoxSizer(wx.HORIZONTAL)
-            hboxName.Add(userNameMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxName.Add(self.userNameTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            findButton = wx.Button(parent=panel, id=1, label="点击查找", pos=(100, 50))
-            returnButton = wx.Button(parent=panel, id=2, label="点击返回", pos=(100, 50))
-
-            vbox = wx.BoxSizer(wx.VERTICAL)
-            vbox.Add(hboxName, proportion=1, flag=wx.CENTER)
-            vbox.Add(findButton, proportion=1, flag=wx.CENTER)
-            vbox.Add(returnButton, proportion=1, flag=wx.CENTER)
-            panel.SetSizer(vbox)
-
-            self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=3)
-            self.gp = globalpanel
-            self.lo = loc
-            self.returntoback = returntoback
-            self.Show()
-
+    class FindOneTeacherButton(AbstractFrame):
+        def __init__(self, title,returntoback,aams,loc):
+            super().__init__(title,returntoback,aams,loc)
+            self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
+            findButton = wx.Button(self.panel, id=1, label="点击查找")
+            self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(findButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.frame.Show()
         def onClick(self, event):
             eventId = event.GetId()
             if eventId == 1:
-                userKeyName = self.userNameTextCtrl.GetValue()
-                group, loc = self.gp.locNameRepeat(userKeyName, 2)
+                userKeyName = self.nameValue.GetValue()
+                group, loc = self.aams.locNameRepeat(userKeyName, 2)
                 if not loc == -1:
-                    self.findOneTeacherButton(self.gp, loc)
+                    self.findOneTeacherButton(self.aams, loc)
                 else:
-                    errorFrame = ErrorFrame(f"未找到该教师!")
-                    errorFrame.ShowModal()
-                    errorFrame.Destroy()
-            elif eventId == 2:
-                self.Hide()
-                self.returntoback()
-
+                    MessageFrame(f"未找到该教师!")
         @classmethod
-        def findOneTeacherButton(cls, gp, loc):
+        def findOneTeacherButton(cls, aams, loc):
             teacherInfo = ''
-            teacherInfo += f"姓名:{gp.teacherList[loc].mName}\n"
-            teacherInfo += f"身份证:{gp.teacherList[loc].mId}\n"
-            teacherInfo += f"年龄:{gp.teacherList[loc].mAge}\n"
-            teacherInfo += f"手机号:{gp.teacherList[loc].mPhoneNumber}\n"
-            teacherInfo += f"邀请码:{gp.teacherList[loc].mCode}\n"
-            messageFrame = MessageFrame(teacherInfo)
+            teacherInfo += f"姓名:{aams.teacherList[loc].mName}\n"
+            teacherInfo += f"身份证:{aams.teacherList[loc].mId}\n"
+            teacherInfo += f"年龄:{aams.teacherList[loc].mAge}\n"
+            teacherInfo += f"手机号:{aams.teacherList[loc].mPhoneNumber}\n"
+            teacherInfo += f"邀请码:{aams.teacherList[loc].mCode}\n"
+            TextFrame(teacherInfo)
 
-    class DelOneTeacherButton(wx.Frame):
-        def __init__(self, globalpanel, loc, returntoback):
-            super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                             size=(300, 140), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-            panel = wx.Panel(self)
-            userNameMesaage = wx.StaticText(parent=panel, label="用户名")
-            self.userNameTextCtrl = wx.TextCtrl(panel)
-            self.userNameTextCtrl.SetValue('请输入用户名')
-
-            hboxName = wx.BoxSizer(wx.HORIZONTAL)
-            hboxName.Add(userNameMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxName.Add(self.userNameTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            findButton = wx.Button(parent=panel, id=1, label="点击查找并删除", pos=(100, 50))
-            returnButton = wx.Button(parent=panel, id=2, label="点击返回", pos=(100, 50))
-
-            vbox = wx.BoxSizer(wx.VERTICAL)
-            vbox.Add(hboxName, proportion=1, flag=wx.CENTER)
-            vbox.Add(findButton, proportion=1, flag=wx.CENTER)
-            vbox.Add(returnButton, proportion=1, flag=wx.CENTER)
-            panel.SetSizer(vbox)
-
-            self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=3)
-            self.gp = globalpanel
-            self.lo = loc
-            self.returntoback = returntoback
-            self.Show()
+    class DelOneTeacherButton(AbstractFrame):
+        def __init__(self, title,returntoback,aams,loc):
+            super().__init__(title,returntoback,aams,loc)
+            self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
+            findButton = wx.Button(self.panel, id=1, label="点击查找并删除")
+            self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(findButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.frame.Show()
 
         def onClick(self, event):
             eventId = event.GetId()
             if eventId == 1:
-                userKeyName = self.userNameTextCtrl.GetValue()
-                group, loc = self.gp.locNameRepeat(userKeyName, 2)
+                userKeyName = self.nameValue.GetValue()
+                group, loc = self.aams.locNameRepeat(userKeyName, 2)
                 if not loc == -1:
-                    del self.gp.teacherList[loc]
-                    Save(self.gp)
-                    errorFrame = ErrorFrame(f"删除成功!")
-                    errorFrame.ShowModal()
-                    errorFrame.Destroy()
+                    del self.aams.teacherList[loc]
+                    Save(self.aams)
+                    MessageFrame(f"删除成功!")
                 else:
-                    errorFrame = ErrorFrame(f"未找到该教师!")
-                    errorFrame.ShowModal()
-                    errorFrame.Destroy()
-            elif eventId == 2:
-                self.Hide()
-                self.returntoback()
-
-
-class AdminStudentPanel(wx.Frame):
-    def __init__(self, globalpanel, loc, returntoback):
-        super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                         size=(300, 270), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-        panel = wx.Panel(self)
-
-        exitAdminStudentButton = wx.Button(parent=panel, id=1, label="退出学生管理", pos=(50, 10))
-        addOneStudentButton = wx.Button(parent=panel, id=2, label="添加单名学生", pos=(50, 10))
-        shouAllStudentButton = wx.Button(parent=panel, id=3, label="查看所有学生", pos=(50, 10))
-        findOneStudentButton = wx.Button(parent=panel, id=4, label="查看单名学生", pos=(50, 10))
-        delOneStudentButton = wx.Button(parent=panel, id=5, label="删除单名学生", pos=(50, 10))
-
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(exitAdminStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(addOneStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(shouAllStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(findOneStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-        vbox.Add(delOneStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-
-        panel.SetSizer(vbox)
-        self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=5)
-        self.gp = globalpanel
-        self.loc = loc
-        self.returntoback = returntoback
-
+                    MessageFrame(f"未找到该教师!")
+class AdminStudentPanel(AbstractFrame):
+    def __init__(self, title,returntoback,aams,loc):
+        super().__init__(title,returntoback,aams,loc)
+        addOneStudentButton = wx.Button(self.panel, id=2, label="添加单名学生")
+        shouAllStudentButton = wx.Button(self.panel, id=3, label="查看所有学生")
+        findOneStudentButton = wx.Button(self.panel, id=4, label="查看单名学生")
+        delOneStudentButton = wx.Button(self.panel, id=5, label="删除单名学生")
+        self.vbox.Add(addOneStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(shouAllStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(findOneStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(delOneStudentButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        self.frame.Show()
     def onClick(self, event):
         eventId = event.GetId()
         if eventId == 1:
-            self.Hide()
+            self.frame.Hide()
             self.returntoback()
         elif eventId == 2:
-            self.Hide()
-            addOneStudent = self.AddOneStudent(self.gp, self.loc, self.returnToBack)
-            addOneStudent.Show()
+            self.frame.Hide()
+            self.AddOneStudent("添加单名学生",self.returntoback,self.aams)
         elif eventId == 3:
-            self.showAllStudentButton(self.gp)
+            self.showAllStudentButton(self.aams)
         elif eventId == 4:
-            self.Hide()
-            findOneStudent = self.FindOneStudentButton(self.gp, self.loc, self.returnToBack)
-            findOneStudent.Show()
+            self.frame.Hide()
+            self.FindOneStudentButton("查看单名学生",self.returntoback,self.aams,self.loc)
         elif eventId == 5:
-            self.Hide()
-            delOneStudentButton = self.DelOneStudentButton(self.gp, self.loc, self.returnToBack)
-            delOneStudentButton.Show()
-
-    def returnToBack(self):
-        self.Show()
-
-    class AddOneStudent(wx.Frame):
-        def __init__(self, globalpanel, loc, returntoback):
-            super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                             size=(300, 310), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-            panel = wx.Panel(self)
-            userNameMesaage = wx.StaticText(parent=panel, label="用户名")
-            self.userNameTextCtrl = wx.TextCtrl(panel)
-            self.userNameTextCtrl.SetValue('请输入用户名')
-
-            userIdMesaage = wx.StaticText(parent=panel, label="身份证")
-            self.userIdTextCtrl = wx.TextCtrl(panel)
-            self.userIdTextCtrl.SetValue('请输入身份证')
-
-            userPhoneMesaage = wx.StaticText(parent=panel, label="手机号")
-            self.userPhoneTextCtrl = wx.TextCtrl(panel)
-            self.userPhoneTextCtrl.SetValue('请输入手机号')
-
-            # 密码
-            passwordMessage1 = wx.StaticText(parent=panel, label="输入密码")
-            self.passwordTextCtrl1 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
-
-            passwordMessage2 = wx.StaticText(parent=panel, label="重复密码")
-            self.passwordTextCtrl2 = wx.TextCtrl(panel, style=wx.TE_PASSWORD)
-
-            addButton = wx.Button(parent=panel, id=1, label="点击添加", pos=(100, 50))
-            returnButton = wx.Button(parent=panel, id=2, label="点击返回", pos=(100, 50))
-
-            hboxName = wx.BoxSizer(wx.HORIZONTAL)
-            hboxName.Add(userNameMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxName.Add(self.userNameTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxId = wx.BoxSizer(wx.HORIZONTAL)
-            hboxId.Add(userIdMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxId.Add(self.userIdTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxPhone = wx.BoxSizer(wx.HORIZONTAL)
-            hboxPhone.Add(userPhoneMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxPhone.Add(self.userPhoneTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxPassword1 = wx.BoxSizer(wx.HORIZONTAL)
-            hboxPassword1.Add(passwordMessage1, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxPassword1.Add(self.passwordTextCtrl1, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            hboxPassword2 = wx.BoxSizer(wx.HORIZONTAL)
-            hboxPassword2.Add(passwordMessage2, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxPassword2.Add(self.passwordTextCtrl2, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            # 创建垂直方向的盒子布局管理器对象vbox
-            vbox1 = wx.BoxSizer(wx.VERTICAL)
-            vbox1.Add(hboxName, proportion=1, flag=wx.CENTER)
-            vbox1.Add(hboxId, proportion=1, flag=wx.CENTER)
-            vbox1.Add(hboxPhone, proportion=1, flag=wx.CENTER)
-
-            vbox2 = wx.BoxSizer(wx.VERTICAL)
-            vbox2.Add(hboxPassword1, proportion=1, flag=wx.CENTER)
-            vbox2.Add(hboxPassword2, proportion=1, flag=wx.CENTER)
-
-            vbox = wx.BoxSizer(wx.VERTICAL)
-            vbox.Add(vbox1, proportion=1, flag=wx.CENTER)
-            vbox.Add(vbox2, proportion=1, flag=wx.CENTER)
-            vbox.Add(addButton, proportion=1, flag=wx.CENTER)
-            vbox.Add(returnButton, proportion=1, flag=wx.CENTER)
-            panel.SetSizer(vbox)
-
-            self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=3)
-            self.gp = globalpanel
-            self.lo = loc
-            self.returntoback = returntoback
-            self.Show()
+            self.frame.Hide()
+            self.DelOneStudentButton("删除单名学生",self.returntoback,self.aams)
+    class AddOneStudent(AbstractFrame):
+        def __init__(self, title,returntoback,aams,loc):
+            super().__init__(title,returntoback,aams,loc)
+            self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
+            self.idValue, mid = setTextBox(self.panel, "身份证", '请输入身份证')
+            self.phoneValue, phone = setTextBox(self.panel, "手机号", '请输入手机号')
+            self.passwordValue1, password1 = setTextBox(self.panel, "输入密码", '',1)
+            self.passwordValue2, password2 = setTextBox(self.panel, "重复密码", '',1)
+            addButton = wx.Button(self.panel, id=1, label="点击添加")
+            self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(mid, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(phone, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(password1, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(password2, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(addButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.frame.Show()
 
         def onClick(self, event):
             eventId = event.GetId()
             if eventId == 1:
-                userKeyName = self.userNameTextCtrl.GetValue()
-                userKeyId = self.userIdTextCtrl.GetValue()
-                userKeyPhone = self.userPhoneTextCtrl.GetValue()
-                userKeyPassword1 = self.passwordTextCtrl1.GetValue()
-                userKeyPassword2 = self.passwordTextCtrl2.GetValue()
+                userKeyName = self.nameValue.GetValue()
+                userKeyId = self.idValue.GetValue()
+                userKeyPhone = self.phoneValue.GetValue()
+                userKeyPassword1 = self.passwordValue1.GetValue()
+                userKeyPassword2 = self.passwordValue2.GetValue()
                 self.addOneStudent(userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2)
-            elif eventId == 2:
-                self.Hide()
-                self.returntoback()
-
         def addOneStudent(self, userKeyName, userKeyId, userKeyPhone, userKeyPassword1, userKeyPassword2):
             messageName, booleanName = checkUserName(userKeyName)
             if not booleanName:
-                errorFrame = ErrorFrame(f"{messageName}")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"{messageName}")
                 return
-
-            group, loc = self.gp.locNameRepeat(userKeyName, 0)
+            group, loc = self.aams.locNameRepeat(userKeyName, 0)
             if loc != -1:
-                errorFrame = ErrorFrame(f"该用户已存在 请勿重复添加!")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"该用户已存在 请勿重复添加!")
                 return
-
             messageId, booleanId = checkUserIdNumber(userKeyId)
             if not booleanId:
-                errorFrame = ErrorFrame(f"{messageId}")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"{messageId}")
                 return
-
             messagePhone, booleanPhone = checkUserPhoneNumber(userKeyPhone)
             if not booleanPhone:
-                errorFrame = ErrorFrame(f"{messagePhone}")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"{messagePhone}")
                 return
-
             if not userKeyPassword1 == userKeyPassword2:
-                errorFrame = ErrorFrame(f"密码不一致,请重新输入!")
-                errorFrame.ShowModal()
-                errorFrame.Destroy()
+                MessageFrame(f"密码不一致,请重新输入!")
                 return
-
             student = Student(userKeyName, userKeyId, userKeyPassword1, userKeyPhone)
-            self.gp.studentList.append(student)
-            Save(self.gp)
-            errorFrame = ErrorFrame(f"添加成功!")
-            errorFrame.ShowModal()
-            errorFrame.Destroy()
+            self.aams.studentList.append(student)
+            Save(self.aams)
+            MessageFrame(f"添加成功!")
 
     @classmethod
-    def showAllStudentButton(cls, gp):
-        number = len(gp.studentList)
+    def showAllStudentButton(cls, aams):
+        number = len(aams.studentList)
         StudentInfo = ''
         for i in range(number):
-            StudentInfo += f"姓名:{gp.studentList[i].mName}   "
-            StudentInfo += f"身份证:{gp.studentList[i].mId}   "
-            StudentInfo += f"年龄:{gp.studentList[i].mAge}   "
-            StudentInfo += f"手机号:{gp.studentList[i].mPhoneNumber}   "
-            StudentInfo += f"我的老师:{gp.studentList[i].mMyTeacName}\n"
-        messageFrame = MessageFrame(StudentInfo)
+            StudentInfo += f"姓名:{aams.studentList[i].mName}   "
+            StudentInfo += f"身份证:{aams.studentList[i].mId}   "
+            StudentInfo += f"年龄:{aams.studentList[i].mAge}   "
+            StudentInfo += f"手机号:{aams.studentList[i].mPhoneNumber}   "
+            StudentInfo += f"我的老师:{aams.studentList[i].mMyTeacName}\n"
+        TextFrame(StudentInfo)
 
-    class FindOneStudentButton(wx.Frame):
-        def __init__(self, globalpanel, loc, returntoback):
-            super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                             size=(300, 140), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-            panel = wx.Panel(self)
-            userNameMesaage = wx.StaticText(parent=panel, label="用户名")
-            self.userNameTextCtrl = wx.TextCtrl(panel)
-            self.userNameTextCtrl.SetValue('请输入用户名')
-
-            hboxName = wx.BoxSizer(wx.HORIZONTAL)
-            hboxName.Add(userNameMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxName.Add(self.userNameTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            findButton = wx.Button(parent=panel, id=1, label="点击查找", pos=(100, 50))
-            returnButton = wx.Button(parent=panel, id=2, label="点击返回", pos=(100, 50))
-
-            vbox = wx.BoxSizer(wx.VERTICAL)
-            vbox.Add(hboxName, proportion=1, flag=wx.CENTER)
-            vbox.Add(findButton, proportion=1, flag=wx.CENTER)
-            vbox.Add(returnButton, proportion=1, flag=wx.CENTER)
-            panel.SetSizer(vbox)
-
-            self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=3)
-            self.gp = globalpanel
-            self.lo = loc
-            self.returntoback = returntoback
-            self.Show()
-
+    class FindOneStudentButton(AbstractFrame):
+        def __init__(self, title,returntoback,aams,loc):
+            super().__init__(title,returntoback,aams,loc)
+            self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
+            findButton = wx.Button(self.panel, id=1, label="点击查找")
+            self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(findButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.frame.Show()
         def onClick(self, event):
             eventId = event.GetId()
             if eventId == 1:
-                userKeyName = self.userNameTextCtrl.GetValue()
-                group, loc = self.gp.locNameRepeat(userKeyName, 3)
+                userKeyName = self.nameValue.GetValue()
+                group, loc = self.aams.locNameRepeat(userKeyName, 3)
                 if not loc == -1:
-                    self.findOneStudentButton(self.gp, loc)
+                    self.findOneStudentButton(self.aams, loc)
                 else:
-                    errorFrame = ErrorFrame(f"未找到该学生!")
-                    errorFrame.ShowModal()
-                    errorFrame.Destroy()
-            elif eventId == 2:
-                self.Hide()
-                self.returntoback()
-
+                    MessageFrame(f"未找到该学生!")
         @classmethod
-        def findOneStudentButton(cls, gp, loc):
+        def findOneStudentButton(cls, aams, loc):
             StudentInfo = ''
-            StudentInfo += f"姓名:{gp.studentList[loc].mName}\n"
-            StudentInfo += f"身份证:{gp.studentList[loc].mId}\n"
-            StudentInfo += f"年龄:{gp.studentList[loc].mAge}\n"
-            StudentInfo += f"手机号:{gp.studentList[loc].mPhoneNumber}\n"
-            StudentInfo += f"我的老师:{gp.studentList[loc].mMyTeacName}\n"
-            messageFrame = MessageFrame(StudentInfo)
+            StudentInfo += f"姓名:{aams.studentList[loc].mName}\n"
+            StudentInfo += f"身份证:{aams.studentList[loc].mId}\n"
+            StudentInfo += f"年龄:{aams.studentList[loc].mAge}\n"
+            StudentInfo += f"手机号:{aams.studentList[loc].mPhoneNumber}\n"
+            StudentInfo += f"我的老师:{aams.studentList[loc].mMyTeacName}\n"
+            TextFrame(StudentInfo)
 
-    class DelOneStudentButton(wx.Frame):
-        def __init__(self, globalpanel, loc, returntoback):
-            super().__init__(None, title=f"欢迎管理员" + globalpanel.adminList[loc].mName + "进入管理系统!",
-                             size=(300, 140), style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER))
-            panel = wx.Panel(self)
-            userNameMesaage = wx.StaticText(parent=panel, label="用户名")
-            self.userNameTextCtrl = wx.TextCtrl(panel)
-            self.userNameTextCtrl.SetValue('请输入用户名')
-
-            hboxName = wx.BoxSizer(wx.HORIZONTAL)
-            hboxName.Add(userNameMesaage, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            hboxName.Add(self.userNameTextCtrl, proportion=5, flag=wx.EXPAND | wx.ALL, border=10)
-
-            findButton = wx.Button(parent=panel, id=1, label="点击查找并删除", pos=(100, 50))
-            returnButton = wx.Button(parent=panel, id=2, label="点击返回", pos=(100, 50))
-
-            vbox = wx.BoxSizer(wx.VERTICAL)
-            vbox.Add(hboxName, proportion=1, flag=wx.CENTER)
-            vbox.Add(findButton, proportion=1, flag=wx.CENTER)
-            vbox.Add(returnButton, proportion=1, flag=wx.CENTER)
-            panel.SetSizer(vbox)
-
-            self.Bind(wx.EVT_BUTTON, self.onClick, id=1, id2=3)
-            self.gp = globalpanel
-            self.lo = loc
-            self.returntoback = returntoback
-            self.Show()
-
+    class DelOneStudentButton(AbstractFrame):
+        def __init__(self, title,returntoback,aams,loc):
+            super().__init__(title,returntoback,aams,loc)
+            self.nameValue, name = setTextBox(self.panel, "用户名", '请输入用户名')
+            findButton = wx.Button(self.panel, id=1, label="点击查找并删除")
+            self.vbox.Add(name, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(findButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.vbox.Add(self.returnButton, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            self.frame.Show()
         def onClick(self, event):
             eventId = event.GetId()
             if eventId == 1:
-                userKeyName = self.userNameTextCtrl.GetValue()
-                group, loc = self.gp.locNameRepeat(userKeyName, 3)
+                userKeyName = self.nameValue.GetValue()
+                group, loc = self.aams.locNameRepeat(userKeyName, 3)
                 if not loc == -1:
-                    del self.gp.studentList[loc]
-                    Save(self.gp)
-                    errorFrame = ErrorFrame(f"删除成功!")
-                    errorFrame.ShowModal()
-                    errorFrame.Destroy()
+                    del self.aams.studentList[loc]
+                    Save(self.aams)
+                    MessageFrame(f"删除成功!")
                 else:
-                    errorFrame = ErrorFrame(f"未找到该学生!")
-                    errorFrame.ShowModal()
-                    errorFrame.Destroy()
-            elif eventId == 2:
-                self.Hide()
-                self.returntoback()
+                    MessageFrame(f"未找到该学生!")

@@ -30,7 +30,6 @@ def AdminListSave(AdminList):
                        f'{obj.mAge}\n')
 
 
-
 def TeacherListSave(TeacherList):
     with open(TFile, 'w') as file:
         for obj in TeacherList:
@@ -46,10 +45,11 @@ def TeacherListSave(TeacherList):
                                 f'{sobj.mMyTeacName},'
                                 f'{sobj.mAge}\n')
 
+
 def initTeacherList(TeacherList):
     os.makedirs('TFile/TSList', exist_ok=True)
     if not os.path.exists(TFile):
-        with open(TFile, 'w') as file:
+        with open(TFile, 'w'):
             pass
 
     with open(TFile, 'r') as file:
@@ -65,17 +65,15 @@ def initTeacherList(TeacherList):
             teacher = Teacher(name, mid, password, phone, code)
             TeacherList.append(teacher)
 
-
     for i in range(len(nameList)):
         stuFilename = 'TFile/TSList/'
         stuFilename += nameList[i]
         stuFilename += ".txt"
         if not os.path.exists(stuFilename):
-            with open(stuFilename, 'w') as sfile:
+            with open(stuFilename, 'w'):
                 pass
         with open(stuFilename, 'r') as sfile:
             for sline in sfile:
-
                 steacherStrip = sline.strip().split(',')
                 name = steacherStrip[0]
                 mid = steacherStrip[1]
@@ -87,17 +85,15 @@ def initTeacherList(TeacherList):
                 TeacherList[i].mOwnStudentList.append(student)
 
 
-
-
-
 def Save(GlobalPanel):
     StudentListSave(GlobalPanel.studentList)
     AdminListSave(GlobalPanel.adminList)
     TeacherListSave(GlobalPanel.teacherList)
 
+
 def initStudentList(StuList):
     if not os.path.exists(SFile):
-        with open(SFile, 'w') as file:
+        with open(SFile, 'w'):
             pass
     with open(SFile, 'r') as file:
         for line in file:
@@ -108,7 +104,7 @@ def initStudentList(StuList):
 
 def initAdminList(AdminList):
     if not os.path.exists(AFile):
-        with open(AFile, 'w') as file:
+        with open(AFile, 'w'):
             pass
     with open(AFile, 'r') as file:
         for line in file:
