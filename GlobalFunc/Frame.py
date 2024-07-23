@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import wx
 
 from GlobalFunc.FileManage import Save
+from GlobalFunc.FrameParts import onSetFocus, onKillFocus
 from GlobalFunc.Func import outCode
 from GlobalFunc.Func import restartProgram
 
@@ -30,7 +31,7 @@ class AbstractFrame(ABC):
         self.frame.Bind(wx.EVT_BUTTON, self.comeToBack, id=901)
         self.frame.Bind(wx.EVT_MENU, self.onClickMenu, id=903, id2=907)
         self.returntoback = returntoback
-
+        self.returnButton.SetFocus()
         # ------------------------根据我的情境需求添加的
         self.aboutUs = wx.Menu()
         self.aboutUs.Append(903, "&联系作者")
@@ -48,6 +49,8 @@ class AbstractFrame(ABC):
             self.frame.Bind(wx.EVT_BUTTON, self.reloadCode, id=902)
             self.keyCode = wx.TextCtrl(self.panel)
             self.keyCode.SetValue("请输入验证码")
+            self.keyCode.Bind(wx.EVT_SET_FOCUS, lambda event: onSetFocus(event, self.keyCode, "请输入验证码"))
+            self.keyCode.Bind(wx.EVT_KILL_FOCUS, lambda event: onKillFocus(event, self.keyCode, "请输入验证码"))
             self.codeBox = wx.BoxSizer(wx.HORIZONTAL)
             self.codeBox.Add(self.keyCode, proportion=1, flag=wx.CENTER | wx.ALL, border=10)
             self.codeBox.Add(self.codeButton, proportion=1, flag=wx.CENTER | wx.ALL, border=10)

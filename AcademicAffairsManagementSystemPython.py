@@ -232,13 +232,8 @@ aams = AcademicAffairsManagementSystemPython()
 
 
 
-aams.updateLog += "Version:1.5\n"
-aams.updateLog += "1.修复了无法通过多态修改信息问题\n"
-aams.updateLog += "2.抽象化了添加人功能\n"
-aams.updateLog += "3.更改了部分细节\n"
-aams.updateLog += "4.文件为空时的初始化\n"
-aams.updateLog += "后续可能考虑的问题-----------\n"
-aams.updateLog += "\"比如 你的用户名框框 不是有字 我点了框框之后 字最好自己消失\"\n"
+aams.updateLog += "Version:1.5.1\n"
+aams.updateLog += "1.文本框快捷输入\n"
 
 initList(aams)
 app = wx.App()

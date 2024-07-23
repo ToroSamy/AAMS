@@ -1,18 +1,25 @@
 import wx
 
-from GlobalFunc.Func import outCode
-def setTextBox(panel, label, initVault, choice=0):
-        setTextMesaage = wx.StaticText(parent=panel, label=label)
-        if choice != 0:
-            setTextTextCtrl = wx.TextCtrl(panel,style=wx.TE_PASSWORD)
-        else:
-            setTextTextCtrl = wx.TextCtrl(panel)
-            setTextTextCtrl.SetValue(f"{initVault}")
-        box = wx.BoxSizer(wx.HORIZONTAL)
-        box.Add(setTextMesaage, proportion=1, flag=wx.CENTER | wx.FIXED_MINSIZE)
-        box.Add(setTextTextCtrl, proportion=5, flag=wx.CENTER | wx.ALL | wx.FIXED_MINSIZE)
-        return setTextTextCtrl,box
-
+def setTextBox(panel, label, initValue, isPassword=0):
+    setTextMessage = wx.StaticText(parent=panel, label=label)
+    if isPassword != 0:
+        setTextTextCtrl = wx.TextCtrl(panel, style=wx.TE_PROCESS_ENTER | wx.TE_PASSWORD, value=initValue)
+    else:
+        setTextTextCtrl = wx.TextCtrl(panel, style=wx.TE_PROCESS_ENTER, value=initValue)
+    setTextTextCtrl.Bind(wx.EVT_SET_FOCUS, lambda event: onSetFocus(event,setTextTextCtrl, initValue))
+    setTextTextCtrl.Bind(wx.EVT_KILL_FOCUS, lambda event: onKillFocus(event,setTextTextCtrl, initValue))
+    box = wx.BoxSizer(wx.HORIZONTAL)
+    box.Add(setTextMessage, proportion=1, flag=wx.CENTER | wx.FIXED_MINSIZE)
+    box.Add(setTextTextCtrl, proportion=5, flag=wx.CENTER | wx.ALL | wx.FIXED_MINSIZE)
+    return setTextTextCtrl, box
+def onKillFocus(event,textCtrl, initValue):
+    if textCtrl.GetValue() == "":
+        textCtrl.SetValue(initValue)
+    event.Skip()
+def onSetFocus(event,textCtrl, initValue):
+    if textCtrl.GetValue() == initValue:
+        textCtrl.SetValue("")
+    event.Skip()
 
 def setButtons(panel, myDict, label,choice=0):
     message = wx.StaticText(parent=panel, label=label)
