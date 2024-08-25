@@ -1,5 +1,4 @@
 import os
-import pandas
 
 from Person.Admin import Admin
 from Person.Student import Student
